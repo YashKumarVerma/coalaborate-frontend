@@ -35,7 +35,8 @@ class LoginForm extends React.Component {
   };
 
   logout = () => {
-    localStorage.remoteItem('token');
+    localStorage.removeItem('token');
+    this.setState({ success: false });
   };
 
   render() {
