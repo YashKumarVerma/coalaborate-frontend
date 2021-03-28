@@ -1,7 +1,7 @@
 import React from 'react';
 // import { DropDown } from './components/dropdown';
 
-import { cleanURL } from './util/cleaner';
+import { getCurrentUrl } from './util/urlExtractor';
 
 class PopUp extends React.Component {
   constructor() {
@@ -11,11 +11,10 @@ class PopUp extends React.Component {
     };
   }
 
-  componentDidMount() {
-    chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-      console.log(cleanURL(tabs[0].url));
-      alert(cleanURL(tabs[0].url));
-    });
+  async componentDidMount() {
+    /** save current URL in application state */
+    const url = await getCurrentUrl();
+    this.setState({ url });
   }
 
   render() {
