@@ -1,0 +1,2 @@
+- Chrome extension initialized using boilerplate from 
+https://github.com/lxieyang/chrome-extension-boilerplate-react
