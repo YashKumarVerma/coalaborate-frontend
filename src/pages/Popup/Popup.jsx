@@ -3,6 +3,7 @@ import React from 'react';
 
 import { getCurrentUrl } from './util/urlExtractor';
 import { getNotesForUrl } from './scripts/getNotesForUrl';
+import { PostNewNote } from './scripts/postNewNote';
 
 /** utility functions */
 const NotificationBar = ({ message }) => {
@@ -32,17 +33,42 @@ class PopUp extends React.Component {
     super();
 
     this.state = {
-      url: undefined,
       notes: [],
+      url: undefined,
+      title: undefined,
+      body: undefined,
+      success: false,
     };
   }
 
+  /** to run when component loads */
   async componentDidMount() {
     const url = await getCurrentUrl();
     const notes = await getNotesForUrl(url);
     this.setState({ url, notes });
     console.log(`notes.for.url.${url}`, notes);
   }
+
+  /** function to update changes to state */
+  handleChange = (event) => {
+    const { name, value } = event.target;
+    this.setState({ [name]: value });
+  };
+
+  /**  function to submit the form and perform login mechanism */
+  handleSubmit = (event) => {
+    event.preventDefault();
+
+    /** to post a new NOTE ! MY BACK HURTS LIKE HELL ATM !  */
+    const { body, title, url } = this.state;
+    PostNewNote(title, body, url)
+      .then((resp) => {
+        this.setState({ success: true });
+      })
+      .catch((e) => {
+        this.setState({ success: false });
+      });
+  };
 
   render() {
     return (
@@ -54,7 +80,7 @@ class PopUp extends React.Component {
             true
           )}
         </div>
-        <form autoComplete="off">
+        <form autoComplete="off" onSubmit={this.handleSubmit}>
           <input
             autocomplete="false"
             name="hidden"
@@ -69,21 +95,26 @@ class PopUp extends React.Component {
               id="title"
               name="title"
               placeholder="Title ? Something like.. Doubt about formula !"
+              onChange={this.handleChange}
             />
           </div>
           <div className="mb-4 mr-5 ml-5">
             <input
               autoComplete="false"
               className="w-full bg-drabya-gray appearance-none rounded-md  border border-gray-300 hover:border-green-400 focus:border-green-600  p-4  text-gray-400 focus:text-green-500  focus:outline-none focus:shadow-outline"
-              type="body"
+              type="text"
               name="body"
-              id=""
+              id="body"
               placeholder="Something more that you'd like to share"
+              onChange={this.handleChange}
             />
           </div>
           <div className="flex justify-center">
-            <button className="bg-white hover:bg-green-600  border border-green-800 text-green-600 hover:text-white font-bold py-2 px-4 rounded-full">
-              Button
+            <button
+              type="submit"
+              className="bg-white hover:bg-green-600  border border-green-800 text-green-600 hover:text-white font-bold py-2 px-4 rounded-full"
+            >
+              Post It !
             </button>
           </div>
         </form>
@@ -91,7 +122,5 @@ class PopUp extends React.Component {
     );
   }
 }
-
-// this.state.notes.map((note)=>{})
 
 export default PopUp;
